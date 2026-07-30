@@ -16,36 +16,39 @@ class Softmax:
     def __init__(self):
         self.z = None
 
-    def forward(self, z):
-        self.z = z
-        exp_z = np.exp(z - np.max(z))
+    def forward(self,z):
+
+        exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
+        self.a = exp_z / np.sum(exp_z,axis=1,keepdims=True)
         return exp_z / exp_z.sum(axis=0, keepdims=True)
+    
     def backward(self, dA):
         s = self.forward(self.z)
         dz = np.multiply(dA, s * (1-s))
         return dz
 
-class Tanh: 
+class Tanh:
+
     def __init__(self):
-        self.z = None
+        self.a = None
 
-    def forward(self, z):
-        self.z = z
-        return np.tanh(z)
+    def forward(self,z):
+        self.a = np.tanh(z)
+        return self.a
 
-    def backward(self, dA):
-        dz = np.multiply(dA, 1 - np.tanh(self.z)**2)
-        return dz
+    def backward(self,dA):
+        return dA * (1 - self.a**2)
 
-class Sigmoid: 
+class Sigmoid:
+
     def __init__(self):
-        self.z = None
+        self.a = None
 
-    def forward(self, z):
-        self.z = z
-        return 1 / (1 + np.exp(-z))
 
-    def backward(self, dA):
-        s = self.forward(self.z)
-        dz = np.multiply(dA, s * (1 - s))
-        return dz
+    def forward(self,z):
+        self.a = 1/(1+np.exp(-z))
+        return self.a
+
+
+    def backward(self,dA):
+        return dA * self.a * (1-self.a)

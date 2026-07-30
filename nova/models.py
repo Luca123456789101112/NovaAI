@@ -3,6 +3,7 @@ import numpy as np
 class Sequential:
     def __init__(self):
         self.layers = []
+        self.loss = None
 
     def add(self, layer):
         self.layers.append(layer)
@@ -25,3 +26,16 @@ class Sequential:
             if hasattr(layer, "w"):
                 layer.w -= learning_rate * layer.dw
                 layer.b -= learning_rate * layer.db
+
+    def compile(self, loss):
+        self.loss = loss
+
+    def fit(self, x, y, iterations_num):
+        for i in range(iterations_num):
+            y_pred = self.forward(x)
+            loss = self.loss.forward(y, y_pred)
+            dA = self.loss.backward(y, y_pred)
+            self.backward(dA)
+            self.update_params(learning_rate=0.05)        
+
+        return f"Final training loss: {loss}"
