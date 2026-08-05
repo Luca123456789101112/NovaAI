@@ -14,17 +14,17 @@ class ReLu:
 
 class Softmax:
     def __init__(self):
-        self.z = None
+        self.a = None
 
-    def forward(self,z):
-
+    def forward(self, z):
         exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
-        self.a = exp_z / np.sum(exp_z,axis=1,keepdims=True)
-        return exp_z / exp_z.sum(axis=0, keepdims=True)
-    
+        self.a = exp_z / np.sum(exp_z, axis=1, keepdims=True)
+        return self.a
+
     def backward(self, dA):
-        s = self.forward(self.z)
-        dz = np.multiply(dA, s * (1-s))
+        s = self.a
+        dot = np.sum(s * dA, axis=1, keepdims=True)
+        dz = s * (dA - dot)
         return dz
 
 class Tanh:
