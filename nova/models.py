@@ -1,5 +1,7 @@
 import numpy as np
 
+from layers import Dropout
+
 class Sequential:
     def __init__(self):
         self.layers = []
@@ -8,10 +10,13 @@ class Sequential:
     def add(self, layer):
         self.layers.append(layer)
 
-    def forward(self, x):
+    def forward(self, x, training=True):
         output = x
         for layer in self.layers:
-            output = layer.forward(output)
+            if isinstance(layer, Dropout):
+                output = layer.forward(output, training)
+            else:
+                output = layer.forward(output)
         return output
 
     def backward(self, dA):
@@ -39,3 +44,8 @@ class Sequential:
             self.update_params(learning_rate=0.05)        
 
         return f"Final training loss: {loss}"
+
+    def predict(self, x):
+        y_pred = self.forward(x, training=False)
+        return y_pred
+
