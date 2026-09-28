@@ -66,13 +66,13 @@ class Sequential:
     def compile(self, loss):
         self.loss = loss
 
-    def fit(self, x, y, iterations_num, optimization_algorithm=None):
+    def fit(self, x, y, iterations_num, optimization_algorithm=None, learning_rate=0.05):
         for i in range(iterations_num):
             y_pred = self.forward(x)
             loss = self.loss.forward(y, y_pred)
             dA = self.loss.backward(y, y_pred)
             self.backward(dA)
-            self.update_params(learning_rate=0.05, optimization_algorithm=optimization_algorithm)     
+            self.update_params(learning_rate=learning_rate, optimization_algorithm=optimization_algorithm)     
             if i % 1000 == 0:          
                 print(i, loss)    
 
